@@ -40,8 +40,10 @@ const App: React.FC = () => {
 
     try {
       const compressed = await compressImage(base64);
+      let successCount = 0;
 
-      const generationPromises = DESIGN_STYLES.map(async (style, index) => {
+      for (let index = 0; index < DESIGN_STYLES.length; index++) {
+        const style = DESIGN_STYLES[index];
         try {
           const generatedUrl = await generateInteriorDesign(compressed, style, intensity);
           if (generatedUrl) {
@@ -54,21 +56,18 @@ const App: React.FC = () => {
               if (prev.find(d => d.style === style)) return prev;
               return [...prev, designObj];
             });
-            return designObj;
+            successCount++;
           }
         } catch (err) {
           console.error(`Failed to generate style ${style}:`, err);
         }
-        return null;
-      });
-
-      await Promise.allSettled(generationPromises);
-
-      if (designs.length === 0) {
-        const anyResults = (await Promise.all(generationPromises)).some(Boolean);
-        if (!anyResults && designs.length === 0) {
-           setErrorMessage("Connection issue. Please try a different photo.");
+        if (index < DESIGN_STYLES.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
+      }
+
+      if (successCount === 0) {
+        setErrorMessage("Connection issue. Please try a different photo.");
       }
     } catch (err) {
       setErrorMessage("Photo processing failed. Try another image.");
