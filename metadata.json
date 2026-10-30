@@ -1,7 +1,0 @@
-{
-  "name": "Lumina Interior Design",
-  "description": "Transform your bare condo into a stunning living space. Upload a photo, generate 5 unique design styles, and fine-tune every detail with AI-powered editing.",
-  "requestFramePermissions": [
-    "camera"
-  ]
-}
